@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Metro Rush</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="hud">
+      <div id="score-wrap">
+        <div class="label">POÄNG</div>
+        <div id="score">0</div>
+      </div>
+      <div id="coin-wrap">
+        <span class="coin-dot"></span>
+        <span id="coins">0</span>
+      </div>
+    </div>
+
+    <div id="overlay" class="screen">
+      <p class="kicker">Endless runner</p>
+      <h1>METRO RUSH</h1>
+      <p class="blurb">Spring längs spåren. Byt fil, hoppa över hinder och rulla under skyltar.</p>
+      <ul class="howto">
+        <li><kbd>←</kbd> <kbd>→</kbd> eller <kbd>A</kbd> <kbd>D</kbd> byt fil</li>
+        <li><kbd>↑</kbd> <kbd>W</kbd> <kbd>SPACE</kbd> hoppa</li>
+        <li><kbd>↓</kbd> <kbd>S</kbd> rulla</li>
+      </ul>
+      <button id="play-btn" type="button">SPRING</button>
+    </div>
+
+    <div id="dead" class="screen hidden">
+      <p class="kicker">Game over</p>
+      <h1>KRASCH!</h1>
+      <p id="dead-score" class="blurb">0 poäng · 0 mynt</p>
+      <button id="retry-btn" type="button">IGEN</button>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

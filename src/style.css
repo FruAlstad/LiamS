@@ -1,0 +1,144 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #2c3238;
+  font-family: "IBM Plex Sans", sans-serif;
+  color: #e8ecef;
+  user-select: none;
+  touch-action: none;
+}
+
+canvas {
+  display: block;
+}
+
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#score-wrap {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+#score-wrap .label {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  opacity: 0.7;
+}
+
+#score {
+  font-size: 36px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+#coin-wrap {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(12, 14, 16, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.coin-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8d5a0, #b08d3a);
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 24px;
+  background: rgba(18, 20, 24, 0.62);
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.kicker {
+  margin: 0;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #b7c4ce;
+}
+
+h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(36px, 7vw, 56px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.blurb {
+  margin: 0 0 18px;
+  max-width: 420px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: rgba(232, 236, 239, 0.82);
+}
+
+.howto {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  font-size: 15px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 4px;
+  padding: 12px 32px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #111;
+  background: #d8dde2;
+}
+
+button:hover {
+  filter: brightness(1.06);
+}
