@@ -13,6 +13,7 @@
   </head>
   <body>
     <div id="hud">
+      <button id="shop-btn" type="button">SHOP</button>
       <div id="score-wrap">
         <div class="label">POÄNG</div>
         <div id="score">0</div>
@@ -21,6 +22,22 @@
         <span class="coin-dot"></span>
         <span id="coins">0</span>
       </div>
+      <div id="power-status"></div>
+    </div>
+
+    <div id="shop-panel" class="hidden">
+      <div class="shop-head">
+        <div>
+          <div class="shop-title">SHOP</div>
+          <div class="shop-sub">Power-ups · bara denna runda</div>
+        </div>
+        <div class="shop-wallet">
+          <span class="coin-dot"></span>
+          <span id="shop-balance">0</span>
+        </div>
+        <button id="shop-close" type="button">✕</button>
+      </div>
+      <div id="shop-list"></div>
     </div>
 
     <div id="overlay" class="screen">

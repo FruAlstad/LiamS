@@ -5,6 +5,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { Runner } from './game.js'
 import { createAudio } from './audio.js'
+import { createShopUI } from './shop.js'
 
 const input = {
   left: false,
@@ -14,9 +15,11 @@ const input = {
 }
 
 const held = { ...input }
+const pressed = { left: false, right: false, jump: false, slide: false }
 
 function bindKey(down) {
   return (e) => {
+    if (shop.isOpen()) return
     const map = {
       KeyA: 'left',
       ArrowLeft: 'left',
@@ -31,8 +34,14 @@ function bindKey(down) {
     const k = map[e.code]
     if (!k) return
     e.preventDefault()
-    input[k] = down
-    held[k] = down
+    if (down) {
+      if (!held[k]) pressed[k] = true
+      held[k] = true
+      input[k] = true
+    } else {
+      held[k] = false
+      input[k] = false
+    }
   }
 }
 window.addEventListener('keydown', bindKey(true))
@@ -43,6 +52,7 @@ let touchY = 0
 window.addEventListener(
   'touchstart',
   (e) => {
+    if (shop.isOpen()) return
     const t = e.changedTouches[0]
     touchX = t.clientX
     touchY = t.clientY
@@ -52,18 +62,19 @@ window.addEventListener(
 window.addEventListener(
   'touchend',
   (e) => {
+    if (shop.isOpen()) return
     const t = e.changedTouches[0]
     const dx = t.clientX - touchX
     const dy = t.clientY - touchY
     if (Math.abs(dx) < 24 && Math.abs(dy) < 24) {
-      input.jump = true
+      pressed.jump = true
       return
     }
     if (Math.abs(dx) > Math.abs(dy)) {
-      if (dx < 0) input.left = true
-      else input.right = true
-    } else if (dy < 0) input.jump = true
-    else input.slide = true
+      if (dx < 0) pressed.left = true
+      else pressed.right = true
+    } else if (dy < 0) pressed.jump = true
+    else pressed.slide = true
   },
   { passive: true },
 )
@@ -149,8 +160,19 @@ composer.addPass(bloom)
 const runner = new Runner(scene)
 const audio = createAudio()
 
+const shop = createShopUI({
+  getCoins: () => runner.coins,
+  onBuy: (id) => {
+    if (!playing || runner.dead) return false
+    const ok = runner.buy(id)
+    if (ok) audio.coin()
+    return ok
+  },
+})
+
 const scoreEl = document.getElementById('score')
 const coinsEl = document.getElementById('coins')
+const powerEl = document.getElementById('power-status')
 const overlay = document.getElementById('overlay')
 const deadScreen = document.getElementById('dead')
 const deadScore = document.getElementById('dead-score')
@@ -161,28 +183,31 @@ const camPos = new THREE.Vector3(0, 4.8, -9.5)
 const look = new THREE.Vector3()
 
 function consumePulse() {
-  const frame = {
-    left: input.left,
-    right: input.right,
-    jump: input.jump,
-    slide: input.slide,
+  if (shop.isOpen()) {
+    input.left = input.right = input.jump = input.slide = false
+    pressed.left = pressed.right = pressed.jump = pressed.slide = false
+    return { left: false, right: false, jump: false, slide: false }
   }
-  if (!held.left) input.left = false
-  if (!held.right) input.right = false
-  if (!held.jump) input.jump = false
-  if (!held.slide) input.slide = false
+  const frame = {
+    left: pressed.left,
+    right: pressed.right,
+    jump: pressed.jump || held.jump,
+    slide: pressed.slide || held.slide,
+  }
+  pressed.left = pressed.right = pressed.jump = pressed.slide = false
   return frame
 }
 
 function tick(now) {
+  const paused = shop.isOpen()
   const dt = Math.min(0.033, (now - last) / 1000)
   last = now
 
   const frame = consumePulse()
-  if (playing) runner.update(dt, frame, audio)
+  if (playing && !paused) runner.update(dt, frame, audio)
 
   const z = runner.z
-  camPos.lerp(new THREE.Vector3(runner.x * 0.45, 4.7 + runner.y * 0.2, z - 9.2), 0.1)
+  camPos.lerp(new THREE.Vector3(runner.x * 0.45, 4.7 + runner.y * 0.2, z - 9.2), paused ? 1 : 0.1)
   camera.position.copy(camPos)
   look.set(runner.x * 0.2, 1.35, z + 16)
   camera.lookAt(look)
@@ -199,11 +224,14 @@ function tick(now) {
 
   scoreEl.textContent = String(runner.score)
   coinsEl.textContent = String(runner.coins)
+  powerEl.textContent = paused && playing ? 'PAUSAT · SHOP' : runner.activePowersLabel()
+  if (paused) shop.refresh()
 
   if (playing && runner.dead) {
     playing = false
+    shop.close()
     audio.crash()
-    deadScore.textContent = `${runner.score} poäng · ${runner.coins} mynt`
+    deadScore.textContent = `${runner.score} poäng · ${runner.runCoins} nya · totalt ${runner.coins} mynt`
     deadScreen.classList.remove('hidden')
   }
 
@@ -215,6 +243,7 @@ function start() {
   audio.resume()
   runner.reset()
   playing = true
+  shop.close()
   overlay.classList.add('hidden')
   deadScreen.classList.add('hidden')
 }
